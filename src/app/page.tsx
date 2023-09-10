@@ -1,6 +1,6 @@
 "use client";
 import useSnakeGame from "@/hooks/useSnakeGame";
-import { CANVAS_HEIGHT } from "@/constants/game";
+import { CANVAS_HEIGHT, CANVAS_WIDTH } from "@/constants/game";
 import {
   StarIcon,
   TrophyIcon,
@@ -17,7 +17,7 @@ export default function Home() {
     <main>
       <canvas
         ref={canvasRef}
-        width={CANVAS_HEIGHT + 1}
+        width={CANVAS_WIDTH + 1}
         height={CANVAS_HEIGHT + 1}
       />
       <section>
