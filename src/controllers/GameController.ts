@@ -1,4 +1,12 @@
-import { CANVAS_GRID_SIZE, CANVAS_HEIGHT, CANVAS_WIDTH, FILL_STYLE, MIN_GAME_SPEED, SNAKE_HEAD, STROKE_STYLE } from "@/constants/game";
+import {
+  CANVAS_GRID_SIZE,
+  CANVAS_HEIGHT,
+  CANVAS_WIDTH,
+  FILL_STYLE,
+  MIN_GAME_SPEED,
+  SNAKE_HEAD,
+  STROKE_STYLE,
+} from "@/constants/game";
 import { Dispatch } from "react";
 
 export interface GameState {
@@ -72,16 +80,18 @@ export class GameController {
     // Check if random position interferes with snake head or trail
     if (
       (this.state.snake.head.x === x && this.state.snake.head.y === y) ||
-      this.state.snake.trail.some((snakePart) => snakePart.x === x && snakePart.y === y)
+      this.state.snake.trail.some(
+        (snakePart) => snakePart.x === x && snakePart.y === y
+      )
     ) {
-      return this.generateApplePosition()
+      return this.generateApplePosition();
     }
-    return { x, y }
+    return { x, y };
   }
 
   startGame() {
     this?.dispatch({
-      type: 'UPDATE',
+      type: "UPDATE",
       payload: {
         gameDelay: 1000 / MIN_GAME_SPEED,
         isLost: false,
@@ -92,8 +102,8 @@ export class GameController {
         running: true,
         newHighScore: false,
         countDown: 3,
-      }
-    })
+      },
+    });
   }
 
   gameOver() {
@@ -101,15 +111,15 @@ export class GameController {
       isLost: true,
       running: false,
       velocity: { dx: 0, dy: 0 },
-      countDown: 4
+      countDown: 4,
     };
     if (this.state.score > this.state.highScore) {
-      payload = { ...payload, highScore: this.state.score, newHighScore: true }
-      localStorage.setItem('highscore', this.state.score.toString());
+      payload = { ...payload, highScore: this.state.score, newHighScore: true };
+      localStorage.setItem("highscore", this.state.score.toString());
     }
     this.dispatch({
       type: "UPDATE",
-      payload
+      payload,
     });
   }
 
@@ -160,7 +170,7 @@ export class GameController {
         snakePart.y * CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE
-      )
+      );
 
       this.strokeRect(
         ctx,
@@ -168,18 +178,18 @@ export class GameController {
         snakePart.y * CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE
-      )
+      );
     });
   }
 
   drawApple(ctx: CanvasRenderingContext2D) {
-    ctx.fillStyle = '#DC3030' // '#38C172' // '#F4CA64'
-    ctx.strokeStyle = '#881A1B' // '#187741' // '#8C6D1F
+    ctx.fillStyle = "#DC3030"; // '#38C172' // '#F4CA64'
+    ctx.strokeStyle = "#881A1B"; // '#187741' // '#8C6D1F
 
     if (
       this.state.apple &&
-      typeof this.state.apple.x !== 'undefined' &&
-      typeof this.state.apple.y !== 'undefined'
+      typeof this.state.apple.x !== "undefined" &&
+      typeof this.state.apple.y !== "undefined"
     ) {
       this.fillRect(
         ctx,
@@ -187,7 +197,7 @@ export class GameController {
         this.state.apple.y * CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE
-      )
+      );
 
       this.strokeRect(
         ctx,
@@ -195,7 +205,7 @@ export class GameController {
         this.state.apple.y * CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE,
         CANVAS_GRID_SIZE
-      )
+      );
     }
   }
 
@@ -204,30 +214,37 @@ export class GameController {
     const nextHeadPosition = {
       x: this.state.snake.head.x + this.state.velocity.dx,
       y: this.state.snake.head.y + this.state.velocity.dy,
-    }
+    };
     if (
       nextHeadPosition.x < 0 ||
       nextHeadPosition.y < 0 ||
       nextHeadPosition.x >= CANVAS_WIDTH / CANVAS_GRID_SIZE ||
       nextHeadPosition.y >= CANVAS_HEIGHT / CANVAS_GRID_SIZE
     ) {
-      this.gameOver()
+      this.gameOver();
     }
 
     // Check for collision with apple
-    if (nextHeadPosition.x === this.state.apple.x && nextHeadPosition.y === this.state.apple.y) {
+    if (
+      nextHeadPosition.x === this.state.apple.x &&
+      nextHeadPosition.y === this.state.apple.y
+    ) {
       this.dispatch({
-        type: 'UPDATE',
+        type: "UPDATE",
         payload: {
           score: this.state.score + 1,
-          apple: this.generateApplePosition()
-        }
-      })
+          apple: this.generateApplePosition(),
+        },
+      });
     }
 
-    const updatedSnakeTrail = [...this.state.snake.trail, { ...this.state.snake.head }]
+    const updatedSnakeTrail = [
+      ...this.state.snake.trail,
+      { ...this.state.snake.head },
+    ];
     // Remove trail history beyond snake trail length (score + 2)
-    while (updatedSnakeTrail.length > this.state.score + 2) updatedSnakeTrail.shift()
+    while (updatedSnakeTrail.length > this.state.score + 2)
+      updatedSnakeTrail.shift();
     // Check for snake colliding with itsself
     if (
       updatedSnakeTrail.some(
@@ -236,25 +253,25 @@ export class GameController {
           snakePart.y === nextHeadPosition.y
       )
     )
-      this.gameOver()
+      this.gameOver();
 
     // Update state
 
     this.dispatch({
-      type: 'UPDATE',
+      type: "UPDATE",
       payload: {
-        previousVelocity: {...this.state.velocity},
+        previousVelocity: { ...this.state.velocity },
         snake: {
-          head: {...nextHeadPosition},
-          trail: [...updatedSnakeTrail]
-        }
-      }
+          head: { ...nextHeadPosition },
+          trail: [...updatedSnakeTrail],
+        },
+      },
     });
   }
 
   onSnakeChange() {
     const canvas = this.ctx;
-    const ctx = canvas?.getContext('2d');
+    const ctx = canvas?.getContext("2d");
 
     if (ctx && !this.state.isLost) {
       this.clearCanvas(ctx);
@@ -266,45 +283,45 @@ export class GameController {
   onKeyDown(e: KeyboardEvent) {
     if (
       [
-        'ArrowUp',
-        'ArrowDown',
-        'ArrowLeft',
-        'ArrowRight',
-        'w',
-        'a',
-        's',
-        'd',
+        "ArrowUp",
+        "ArrowDown",
+        "ArrowLeft",
+        "ArrowRight",
+        "w",
+        "a",
+        "s",
+        "d",
       ].includes(e.key)
     ) {
-      let velocity = { dx: 0, dy: 0 }
+      let velocity = { dx: 0, dy: 0 };
 
       switch (e.key) {
-        case 'ArrowRight':
-          velocity = { dx: 1, dy: 0 }
-          break
-        case 'ArrowLeft':
-          velocity = { dx: -1, dy: 0 }
-          break
-        case 'ArrowDown':
-          velocity = { dx: 0, dy: 1 }
-          break
-        case 'ArrowUp':
-          velocity = { dx: 0, dy: -1 }
-          break
-        case 'd':
-          velocity = { dx: 1, dy: 0 }
-          break
-        case 'a':
-          velocity = { dx: -1, dy: 0 }
-          break
-        case 's':
-          velocity = { dx: 0, dy: 1 }
-          break
-        case 'w':
-          velocity = { dx: 0, dy: -1 }
-          break
+        case "ArrowRight":
+          velocity = { dx: 1, dy: 0 };
+          break;
+        case "ArrowLeft":
+          velocity = { dx: -1, dy: 0 };
+          break;
+        case "ArrowDown":
+          velocity = { dx: 0, dy: 1 };
+          break;
+        case "ArrowUp":
+          velocity = { dx: 0, dy: -1 };
+          break;
+        case "d":
+          velocity = { dx: 1, dy: 0 };
+          break;
+        case "a":
+          velocity = { dx: -1, dy: 0 };
+          break;
+        case "s":
+          velocity = { dx: 0, dy: 1 };
+          break;
+        case "w":
+          velocity = { dx: 0, dy: -1 };
+          break;
         default:
-          console.error('Error with handleKeyDown')
+          console.error("Error with handleKeyDown");
       }
       if (
         !(
@@ -313,13 +330,12 @@ export class GameController {
         )
       ) {
         this.dispatch({
-          type: 'UPDATE',
+          type: "UPDATE",
           payload: {
-            velocity
-          }
+            velocity,
+          },
         });
       }
     }
   }
-
 }
