@@ -1,4 +1,3 @@
-<img width="2304" alt="game" src="https://github.com/rachit1994/snake-game/assets/16963154/2f39ac53-a370-431d-8325-d4b4f15a0665">This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
 
